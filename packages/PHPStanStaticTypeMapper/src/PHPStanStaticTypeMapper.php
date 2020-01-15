@@ -16,10 +16,7 @@ use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
-use PHPStan\Type\CallableType;
 use PHPStan\Type\ClosureType;
-use PHPStan\Type\FloatType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
@@ -27,9 +24,7 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
-use PHPStan\Type\ResourceType;
 use PHPStan\Type\StaticType;
-use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
@@ -187,7 +182,7 @@ final class PHPStanStaticTypeMapper
             return '\\' . Closure::class;
         }
 
-        if ($phpStanType instanceof StringType || $phpStanType instanceof NullType || $phpStanType instanceof IntegerType || $phpStanType instanceof MixedType || $phpStanType instanceof FloatType || $phpStanType instanceof CallableType || $phpStanType instanceof ResourceType) {
+        if ($phpStanType instanceof NullType || $phpStanType instanceof MixedType) {
             return $phpStanType->describe(VerbosityLevel::typeOnly());
         }
 
