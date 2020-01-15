@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rector\PHPStanStaticTypeMapper;
 
-use Closure;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
@@ -15,21 +14,14 @@ use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use PHPStan\Type\ArrayType;
-use PHPStan\Type\BooleanType;
-use PHPStan\Type\ClosureType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\IterableType;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\NeverType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\VerbosityLevel;
-use PHPStan\Type\VoidType;
 use Rector\AttributeAwarePhpDoc\Ast\Type\AttributeAwareUnionTypeNode;
 use Rector\Exception\NotImplementedException;
 use Rector\NodeTypeResolver\ClassExistenceStaticHelper;
@@ -178,14 +170,6 @@ final class PHPStanStaticTypeMapper
             return 'object';
         }
 
-        if ($phpStanType instanceof ClosureType) {
-            return '\\' . Closure::class;
-        }
-
-        if ($phpStanType instanceof NullType || $phpStanType instanceof MixedType) {
-            return $phpStanType->describe(VerbosityLevel::typeOnly());
-        }
-
         if ($phpStanType instanceof ArrayType) {
             if ($phpStanType->getItemType() instanceof UnionType) {
                 $unionedTypesAsString = [];
@@ -212,16 +196,6 @@ final class PHPStanStaticTypeMapper
             return implode('|', $docStringTypes);
         }
 
-        if ($phpStanType instanceof VoidType) {
-            if ($this->phpVersionProvider->isAtLeast(PhpVersionFeature::SCALAR_TYPES)) {
-                // the void type is better done in PHP code
-                return '';
-            }
-
-            // fallback for PHP 7.0 and older, where void type was only in docs
-            return 'void';
-        }
-
         if ($phpStanType instanceof IterableType) {
             if ($this->phpVersionProvider->isAtLeast(PhpVersionFeature::SCALAR_TYPES)) {
                 // the void type is better done in PHP code
@@ -229,14 +203,6 @@ final class PHPStanStaticTypeMapper
             }
 
             return 'iterable';
-        }
-
-        if ($phpStanType instanceof BooleanType) {
-            return 'bool';
-        }
-
-        if ($phpStanType instanceof NeverType) {
-            return 'mixed';
         }
 
         throw new NotImplementedException(__METHOD__ . ' for ' . get_class($phpStanType));

@@ -13,6 +13,7 @@ use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\VerbosityLevel;
 use Rector\PHPStan\Type\AliasedObjectType;
 use Rector\PHPStan\Type\FullyQualifiedObjectType;
 use Rector\PHPStan\Type\ShortenedObjectType;
@@ -58,5 +59,10 @@ final class ObjectTypeMapper implements TypeMapperInterface
 
         // fallback
         return new FullyQualified($type->getClassName());
+    }
+
+    public function mapToDocString(Type $type, ?Type $parentType = null): string
+    {
+        return $type->describe(VerbosityLevel::typeOnly());
     }
 }
